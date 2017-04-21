@@ -27,5 +27,6 @@ public class IndoorLocalization extends AppCompatActivity {
         mTabSpec.setIndicator("triangle counting");
         tabHost.addTab(mTabSpec);
 
+
     }
 }
