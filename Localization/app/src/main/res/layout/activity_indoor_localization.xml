@@ -35,15 +35,6 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/txt_tab1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="TextView"
-                        tools:layout_editor_absoluteX="8dp"
-                        tools:layout_editor_absoluteY="-86dp"
-                        tools:ignore="HardcodedText" />
-
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -66,10 +57,20 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="0.50"
-                            android:text="Stop Scan"
                             android:onClick="scan_stop"
+                            android:text="Stop Scan"
                             tools:ignore="ButtonStyle,HardcodedText" />
                     </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/txt_tab1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="TextView"
+                        tools:layout_editor_absoluteX="8dp"
+                        tools:layout_editor_absoluteY="-86dp"
+                        tools:ignore="HardcodedText" />
+
                 </LinearLayout>
 
                 <LinearLayout

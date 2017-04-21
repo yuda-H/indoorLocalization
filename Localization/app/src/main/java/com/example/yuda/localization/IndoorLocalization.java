@@ -12,12 +12,12 @@ public class IndoorLocalization extends AppCompatActivity {
     TabHost tabHost;
     TabHost.TabSpec mTabSpec;
     WifiManager mWifiManager;
-    TextView txt_tab1;
+    TextView txt_timer,scanOrNot;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mWifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        txt_tab1 = (TextView)findViewById(R.id.txt_tab1);
+
         setContentView(R.layout.activity_indoor_localization);
         setTabHost();
     }
@@ -40,12 +40,12 @@ public class IndoorLocalization extends AppCompatActivity {
     }
 
     public void scan_start(View view) {
-        txt_tab1 = (TextView)findViewById(R.id.txt_tab1);
-        txt_tab1.setText("你已經開始掃描了");
+        scanOrNot = (TextView)findViewById(R.id.txt_tab2);
+        scanOrNot.setText("你已經開始掃描了");
     }
 
     public void scan_stop(View view) {
-        txt_tab1 = (TextView)findViewById(R.id.txt_tab1);
-        txt_tab1.setText("你已經結束掃描了");
+        scanOrNot = (TextView)findViewById(R.id.txt_tab2);
+        scanOrNot.setText("你已經結束掃描了");
     }
 }
