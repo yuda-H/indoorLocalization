@@ -11,7 +11,8 @@
         android:layout_width="335dp"
         android:layout_height="482dp"
         tools:layout_editor_absoluteX="21dp"
-        tools:layout_editor_absoluteY="16dp">
+        tools:layout_editor_absoluteY="16dp"
+        tools:ignore="MissingConstraints">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -29,19 +30,6 @@
                 android:layout_height="match_parent">
 
                 <LinearLayout
-                    android:id="@+id/tab1"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/textView2"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="1111111111" />
-                </LinearLayout>
-
-                <LinearLayout
                     android:id="@+id/tab2"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -51,7 +39,8 @@
                         android:id="@+id/textView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="222222222" />
+                        android:text="222222222"
+                        tools:ignore="HardcodedText" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -60,6 +49,20 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical">
 
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/tab1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/textView2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="1111111111"
+                        tools:ignore="HardcodedText" />
                 </LinearLayout>
 
             </FrameLayout>
