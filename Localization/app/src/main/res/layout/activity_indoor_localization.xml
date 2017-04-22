@@ -8,11 +8,13 @@
 
     <TabHost
         android:id="@+id/tabHost"
-        android:layout_width="341dp"
-        android:layout_height="480dp"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="17dp"
-        tools:layout_editor_absoluteY="16dp">
+        android:layout_width="380dp"
+        android:layout_height="600dp"
+        tools:ignore="MissingConstraints,RtlHardcoded"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -62,14 +64,27 @@
                             tools:ignore="ButtonStyle,HardcodedText" />
                     </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/txt_tab1"
+                    <ScrollView
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="TextView"
-                        tools:layout_editor_absoluteX="8dp"
-                        tools:layout_editor_absoluteY="-86dp"
-                        tools:ignore="HardcodedText" />
+                        android:layout_height="match_parent"
+                        tools:ignore="UselessParent">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical" >
+
+                            <TextView
+                                android:id="@+id/txt_tab1"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="TextView"
+                                tools:ignore="HardcodedText"
+                                tools:layout_editor_absoluteX="8dp"
+                                tools:layout_editor_absoluteY="-86dp" />
+
+                        </LinearLayout>
+                    </ScrollView>
 
                 </LinearLayout>
 
