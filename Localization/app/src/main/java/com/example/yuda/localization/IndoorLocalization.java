@@ -11,6 +11,7 @@ import android.widget.TabHost;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class IndoorLocalization extends AppCompatActivity {
@@ -62,23 +63,22 @@ public class IndoorLocalization extends AppCompatActivity {
             String sss = "";
             mWifiManager.startScan();
             List<ScanResult> resultList = mWifiManager.getScanResults();
+            txt_baseInfo = (TextView)findViewById(R.id.txt_baseInfo);
             base = new String[resultList.size()][];
-
-
             try {
                 for (int i = 0; i < resultList.size(); i++) {
                     ScanResult result = resultList.get(i);
-                    sss +=  "\n" + result.SSID + "\n" + result.BSSID + "\b\b\b" + result.level + "\n";
                     base[i] = new String[2];
-                    base[i][0] = result.BSSID;
-                    base[i][1] = result.level+"";
+                    base[i][0] = result.level+"";
+                    base[i][1] = result.BSSID;
+                    sss +=  "\n" + result.SSID + "\n" + result.BSSID + "\b\b\b" + result.level + "\n";
                 }
             }catch (Exception e) {
                 e.printStackTrace();
             }
             txt_timer.setText(sss);
-            txt_baseInfo = (TextView)findViewById(R.id.txt_baseInfo);
-            txt_baseInfo.setText(base[0][0]);
+            base = wifiSorting(base);
+            txt_baseInfo.setText(Arrays.deepToString(base));
             handler.postDelayed(this, 1000);
         }
     };
@@ -96,6 +96,28 @@ public class IndoorLocalization extends AppCompatActivity {
         scanOrNot.setText("你已經結束掃描了");
         handler.removeCallbacks(runnable);
 
+    }
+
+    public String[][] wifiSorting(String[][] base){
+        for (int i=0; i<base.length-1 ;i++) {
+            int index = i;
+            int k=i;
+            String change_level;
+            String change_BSSID;
+            for (int j=i+1; j<base.length; j++) {
+                if(Double.parseDouble(base[j][0]) >= Double.parseDouble(base[k][0])) {
+                    index = j;
+                    k=index;
+                }
+            }
+            change_level = base[i][0];
+            base[i][0] = base[index][0];
+            base[index][0] = change_level;
+            change_BSSID = base[i][1];
+            base[i][1] = base[index][1];
+            base[index][1] = change_BSSID;
+        }
+        return base;
     }
 
     public ArrayList<Double> trianglePoint1(double x, double y, double length) {
