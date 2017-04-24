@@ -10,14 +10,16 @@ import android.view.View;
 import android.widget.TabHost;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class IndoorLocalization extends AppCompatActivity {
     TabHost tabHost;
     TabHost.TabSpec mTabSpec;
     WifiManager mWifiManager;
-    TextView txt_timer,scanOrNot;
+    TextView txt_timer,scanOrNot,txt_baseInfo;
     Handler handler;
+    String[][] base;
 
     @Override
     protected void onPause() {
@@ -33,6 +35,8 @@ public class IndoorLocalization extends AppCompatActivity {
         mWifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         setTabHost();
         handler = new Handler();
+
+
     }
 
 
@@ -58,15 +62,23 @@ public class IndoorLocalization extends AppCompatActivity {
             String sss = "";
             mWifiManager.startScan();
             List<ScanResult> resultList = mWifiManager.getScanResults();
+            base = new String[resultList.size()][];
+
+
             try {
                 for (int i = 0; i < resultList.size(); i++) {
                     ScanResult result = resultList.get(i);
                     sss +=  "\n" + result.SSID + "\n" + result.BSSID + "\b\b\b" + result.level + "\n";
+                    base[i] = new String[2];
+                    base[i][0] = result.BSSID;
+                    base[i][1] = result.level+"";
                 }
             }catch (Exception e) {
                 e.printStackTrace();
             }
             txt_timer.setText(sss);
+            txt_baseInfo = (TextView)findViewById(R.id.txt_baseInfo);
+            txt_baseInfo.setText(base[0][0]);
             handler.postDelayed(this, 1000);
         }
     };
@@ -76,9 +88,6 @@ public class IndoorLocalization extends AppCompatActivity {
         scanOrNot = (TextView)findViewById(R.id.txt_tab2);
         scanOrNot.setText("你已經開始掃描了");
         handler.post(runnable);
-
-
-
     }
 
     public void scan_stop(View view) {
@@ -87,5 +96,10 @@ public class IndoorLocalization extends AppCompatActivity {
         scanOrNot.setText("你已經結束掃描了");
         handler.removeCallbacks(runnable);
 
+    }
+
+    public ArrayList<Double> trianglePoint1(double x, double y, double length) {
+        ArrayList<Double> aa = new ArrayList<>();
+        return aa;
     }
 }

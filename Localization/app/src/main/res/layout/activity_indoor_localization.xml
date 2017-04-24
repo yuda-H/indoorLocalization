@@ -54,7 +54,7 @@
                         tools:ignore="HardcodedText" />
 
                     <TextView
-                        android:id="@+id/textView4"
+                        android:id="@+id/txt_baseInfo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="假設現在距離點座標p1 p2 p3的距離各為" />
