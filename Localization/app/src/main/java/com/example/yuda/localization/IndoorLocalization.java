@@ -29,9 +29,8 @@ public class IndoorLocalization extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mWifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-
         setContentView(R.layout.activity_indoor_localization);
+        mWifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         setTabHost();
         handler = new Handler();
     }
