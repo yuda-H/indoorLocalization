@@ -21,6 +21,7 @@ public class IndoorLocalization extends AppCompatActivity {
     TextView txt_timer,scanOrNot,txt_baseInfo;
     Handler handler;
     String[][] base;
+    String[] BSSID;
 
     @Override
     protected void onPause() {
@@ -36,7 +37,7 @@ public class IndoorLocalization extends AppCompatActivity {
         mWifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         setTabHost();
         handler = new Handler();
-
+        BSSID = new String[]{"c8:3a:35:28:56:b0","00:a2:89:00:d9:61","1c:b7:2c:ed:b5:f8","c8:3a:35:14:ce:a0"};
 
     }
 
@@ -120,8 +121,21 @@ public class IndoorLocalization extends AppCompatActivity {
         return base;
     }
 
-    public ArrayList<Double> trianglePoint1(double x, double y, double length) {
-        ArrayList<Double> aa = new ArrayList<>();
-        return aa;
+    public String[][] wifiChoosing(String[][] base) {
+        String[] choosing = new String[base.length];
+        for (int i=0; i<base.length; i++) {
+            choosing[i] = base[i][1];
+        }
+
+
+        return base;
+    }
+
+    public double[] location(int num, String[][] b) {
+
+
+
+        double[] a = new double[]{};
+        return a;
     }
 }
