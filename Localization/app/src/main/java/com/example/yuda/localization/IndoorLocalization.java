@@ -9,8 +9,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TabHost;
 import android.widget.TextView;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,7 +19,7 @@ public class IndoorLocalization extends AppCompatActivity {
     TextView txt_timer,scanOrNot,txt_baseInfo;
     Handler handler;
     String[][] base;
-    String[] BSSID;
+    String[] databae_BSSID;
 
     @Override
     protected void onPause() {
@@ -37,8 +35,7 @@ public class IndoorLocalization extends AppCompatActivity {
         mWifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         setTabHost();
         handler = new Handler();
-        BSSID = new String[]{"c8:3a:35:28:56:b0","00:a2:89:00:d9:61","1c:b7:2c:ed:b5:f8","c8:3a:35:14:ce:a0"};
-
+        databae_BSSID = new String[]{"c8:3a:35:28:56:b0","00:a2:89:00:d9:61","1c:b7:2c:ed:b5:f8","c8:3a:35:14:ce:a0"};
     }
 
 
@@ -58,7 +55,13 @@ public class IndoorLocalization extends AppCompatActivity {
 
     }
 
-    final Runnable runnable = new Runnable() {
+    // scan wifi per second
+    final Runnable runnable =
+
+
+
+
+            new Runnable() {
         @Override
         public void run() {
             String sss = "";
@@ -78,7 +81,8 @@ public class IndoorLocalization extends AppCompatActivity {
                 e.printStackTrace();
             }
             txt_timer.setText(sss);
-            base = wifiSorting(base);
+            //wifiSorting(base);
+            wifiChoosing(base);
             txt_baseInfo.setText(Arrays.deepToString(base));
             handler.postDelayed(this, 1000);
         }
@@ -87,7 +91,7 @@ public class IndoorLocalization extends AppCompatActivity {
     public void scan_start(View view) {
         txt_timer = (TextView)findViewById(R.id.txt_tab1);
         scanOrNot = (TextView)findViewById(R.id.txt_tab2);
-        scanOrNot.setText("你已經開始掃描了");
+        scanOrNot.setText("你正在掃描了");
         handler.post(runnable);
     }
 
@@ -99,43 +103,55 @@ public class IndoorLocalization extends AppCompatActivity {
 
     }
 
-    public String[][] wifiSorting(String[][] base){
-        for (int i=0; i<base.length-1 ;i++) {
+    // choosing wifi BSSID if the wifi of scanning is in your database
+    public String[][] wifiChoosing(String[][] scanned) {
+        String[] scan = new String[scanned.length];
+        String[][] choosing_result = new String[databae_BSSID.length][2];
+        for (int i=0; i<scanned.length; i++) {
+            scan[i] = scanned[i][1];
+        }
+        List<String> scanList = Arrays.asList(scan);
+        for (int i=0; i<databae_BSSID.length; i++) {
+            if (scanList.contains(databae_BSSID[i])) {
+                int k = scanList.indexOf(databae_BSSID[i]);
+                choosing_result[i][0] = scanned[k][0];
+                choosing_result[i][1] = scanned[k][1];
+            }
+            else {
+                choosing_result[i][0] = databae_BSSID[i];
+                choosing_result[i][1] = -128+"";
+            }
+        }
+        return choosing_result;
+    }
+
+    // sorting wifi base on level
+    public String[][] wifiSorting(String[][] chosen){
+        for (int i=0; i<chosen.length-1 ;i++) {
             int index = i;
             int k=i;
             String change_level;
             String change_BSSID;
-            for (int j=i+1; j<base.length; j++) {
-                if(Double.parseDouble(base[j][0]) >= Double.parseDouble(base[k][0])) {
+            for (int j=i+1; j<chosen.length; j++) {
+                if(Double.parseDouble(chosen[j][0]) >= Double.parseDouble(chosen[k][0])) {
                     index = j;
                     k=index;
                 }
             }
-            change_level = base[i][0];
-            base[i][0] = base[index][0];
-            base[index][0] = change_level;
-            change_BSSID = base[i][1];
-            base[i][1] = base[index][1];
-            base[index][1] = change_BSSID;
+            change_level = chosen[i][0];
+            chosen[i][0] = chosen[index][0];
+            chosen[index][0] = change_level;
+            change_BSSID = chosen[i][1];
+            chosen[i][1] = chosen[index][1];
+            chosen[index][1] = change_BSSID;
         }
-        return base;
+        return chosen;
     }
 
-    public String[][] wifiChoosing(String[][] base) {
-        String[] choosing = new String[base.length];
-        for (int i=0; i<base.length; i++) {
-            choosing[i] = base[i][1];
-        }
+    // triangle algorithm
+    public double[][] coordinate(String[][] apBase, int distance) {
 
-
-        return base;
-    }
-
-    public double[] location(int num, String[][] b) {
-
-
-
-        double[] a = new double[]{};
+        double[][] a = new double[][]{};
         return a;
     }
 }
