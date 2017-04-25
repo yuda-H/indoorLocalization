@@ -82,7 +82,8 @@ public class IndoorLocalization extends AppCompatActivity {
             }
             txt_timer.setText(sss);
             //wifiSorting(base);
-            wifiChoosing(base);
+            base = wifiChoosing(base);
+            wifiSorting(base);
             txt_baseInfo.setText(Arrays.deepToString(base));
             handler.postDelayed(this, 1000);
         }
@@ -118,8 +119,8 @@ public class IndoorLocalization extends AppCompatActivity {
                 choosing_result[i][1] = scanned[k][1];
             }
             else {
-                choosing_result[i][0] = databae_BSSID[i];
-                choosing_result[i][1] = -128+"";
+                choosing_result[i][0] = -128+"";
+                choosing_result[i][1] = databae_BSSID[i];
             }
         }
         return choosing_result;
