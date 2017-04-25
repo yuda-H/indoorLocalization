@@ -56,12 +56,7 @@ public class IndoorLocalization extends AppCompatActivity {
     }
 
     // scan wifi per second
-    final Runnable runnable =
-
-
-
-
-            new Runnable() {
+    final Runnable runnable = new Runnable() {
         @Override
         public void run() {
             String sss = "";
