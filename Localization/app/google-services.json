@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "988223597959-nq5kf69n154es127jmds97a73ruvrhr6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.yuda.localization",
+            "certificate_hash": "4df59667958f5223273f1e74d728bb3a5b9fbcd8"
+          }
+        },
+        {
           "client_id": "988223597959-h19ct3b10llimogdv14ghh4k488mmnv2.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
