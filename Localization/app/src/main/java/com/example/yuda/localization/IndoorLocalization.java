@@ -102,7 +102,7 @@ public class IndoorLocalization extends AppCompatActivity {
     // choosing wifi BSSID if the wifi of scanning is in your database
     public String[][] wifiChoosing(String[][] scanned) {
         String[] scan = new String[scanned.length];
-        String[][] choosing_result = new String[databae_BSSID.length][2];
+        String[][] choosing_result = new String[databae_BSSID.length][3];
         for (int i=0; i<scanned.length; i++) {
             scan[i] = scanned[i][1];
         }
@@ -144,10 +144,11 @@ public class IndoorLocalization extends AppCompatActivity {
         return chosen;
     }
 
-    // triangle algorithm
-    public double[][] coordinate(String[][] apBase, int distance) {
+    // triangle algorithm, [rssi, BSSID, coordinate_x, coordinate_y] has been chosen and sorted
+    public String[][] coordinate(String[][] apBase, int distance) {
+        double[] x = new double[apBase.length];
+        double[] y = new double[apBase.length];
 
-        double[][] a = new double[][]{};
-        return a;
+        return apBase;
     }
 }

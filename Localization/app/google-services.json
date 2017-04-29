@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "988223597959",
+    "firebase_url": "https://wifiinfobycoordinate.firebaseio.com",
+    "project_id": "wifiinfobycoordinate",
+    "storage_bucket": "wifiinfobycoordinate.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:988223597959:android:dc3bf68dc8f18636",
+        "android_client_info": {
+          "package_name": "com.example.yuda.localization"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "988223597959-h19ct3b10llimogdv14ghh4k488mmnv2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.yuda.localization",
+            "certificate_hash": "80c85202f5f0e06ceeedddadeca9fc9bab05c44c"
+          }
+        },
+        {
+          "client_id": "988223597959-sacdseecsk6a0pc29lgqk2g70au42ru4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCEIztcSqxUOvcTIma4VfOvKasOOSAqy8o"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "988223597959-sacdseecsk6a0pc29lgqk2g70au42ru4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
