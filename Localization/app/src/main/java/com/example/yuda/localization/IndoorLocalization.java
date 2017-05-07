@@ -199,8 +199,20 @@ public class IndoorLocalization extends AppCompatActivity {
             txt_timer.setText(sss);
             base = wifiChoosing(base);
             wifiSorting(base);
-            txt_baseInfo.setText(Arrays.deepToString(base)+"\n\n\n\n\n\n"+Arrays.deepToString(dataArray));
+            //txt_baseInfo.setText(Arrays.deepToString(base)+"\n\n\n\n\n\n"+Arrays.deepToString(dataArray));
+            printArray(base);
             handler.postDelayed(this, 500);
         }
     };
+
+    public void printArray(String[][] arr) {
+        String text = "BSSID                       \tscanRSSI\tdataRSSI\t\t\tx\t\t\t\ty\n";
+        for (int i=0; i<arr.length; i++) {
+            for (int j=0; j<arr[0].length; j++) {
+                text += arr[i][j]+"\t\t\t";
+            }
+            text += "\n";
+        }
+        txt_baseInfo.setText(text);
+    }
 }
