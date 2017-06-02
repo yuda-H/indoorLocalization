@@ -179,7 +179,8 @@ public class IndoorLocalization extends AppCompatActivity {
     final Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            String sss = "";
+            StringBuilder sss = new StringBuilder();
+            sss.append("");
             mWifiManager.startScan();
             List<ScanResult> resultList = mWifiManager.getScanResults();
             txt_baseInfo = (TextView)findViewById(R.id.txt_baseInfo);
@@ -191,7 +192,8 @@ public class IndoorLocalization extends AppCompatActivity {
                     base[i][0] = result.BSSID;
                     base[i][1] = result.level+"";
 
-                    sss +=  "\n" + result.SSID + "\n" + result.BSSID + "\b\b\b" + result.level + "\n";
+                    //sss +=  "\n" + result.SSID + "\n" + result.BSSID + "\b\b\b" + result.level + "\n";
+                    sss.append("\n").append(result.SSID).append("\n").append(result.BSSID).append("\b\b\b").append(result.level).append("\n");
                 }
             }catch (Exception e) {
                 e.printStackTrace();
@@ -199,19 +201,19 @@ public class IndoorLocalization extends AppCompatActivity {
             txt_timer.setText(sss);
             base = wifiChoosing(base);
             wifiSorting(base);
-            //txt_baseInfo.setText(Arrays.deepToString(base)+"\n\n\n\n\n\n"+Arrays.deepToString(dataArray));
             printArray(base);
             handler.postDelayed(this, 500);
         }
     };
 
     public void printArray(String[][] arr) {
-        String text = "BSSID                       \tscanRSSI\tdataRSSI\t\t\tx\t\t\t\ty\n";
+        StringBuilder text = new StringBuilder();
+        text.append("BSSID                       \tscanRSSI\tdataRSSI\t\t\tx\t\t\t\ty\n");
         for (int i=0; i<arr.length; i++) {
             for (int j=0; j<arr[0].length; j++) {
-                text += arr[i][j]+"\t\t\t";
+                text.append(arr[i][j]).append("\t\t\t");
             }
-            text += "\n";
+            text.append("\n");
         }
         txt_baseInfo.setText(text);
     }
