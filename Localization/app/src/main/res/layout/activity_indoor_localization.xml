@@ -8,57 +8,41 @@
 
     <TabHost
         android:id="@+id/tabHost"
-        android:layout_width="380dp"
-        android:layout_height="600dp"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         tools:ignore="MissingConstraints,RtlHardcoded"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="8dp"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent">
+        tools:layout_editor_absoluteX="8dp">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             android:orientation="vertical">
 
             <TabWidget
                 android:id="@android:id/tabs"
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="69dp" >
 
             </TabWidget>
 
             <FrameLayout
                 android:id="@android:id/tabcontent"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
 
                 <LinearLayout
-                    android:id="@+id/tab2"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:weightSum="1">
+                    android:id="@+id/tab3"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="match_parent"
+                    <Switch
+                        android:id="@+id/switch1"
+                        android:layout_width="166dp"
                         android:layout_height="wrap_content"
-                        android:text="三角定位法"
-                        tools:ignore="HardcodedText" />
-
-                    <TextView
-                        android:id="@+id/txt_tab2"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text=""
-                        tools:ignore="HardcodedText" />
-
-                    <TextView
-                        android:id="@+id/txt_baseInfo"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="" />
-
+                        android:text="Switch" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -119,10 +103,30 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/tab3"
+                    android:id="@+id/tab2"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:weightSum="1">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="三角定位法"
+                        tools:ignore="HardcodedText" />
+
+                    <TextView
+                        android:id="@+id/txt_tab2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        tools:ignore="HardcodedText" />
+
+                    <TextView
+                        android:id="@+id/txt_baseInfo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="" />
 
                 </LinearLayout>
 

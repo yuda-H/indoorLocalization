@@ -55,16 +55,20 @@ public class IndoorLocalization extends AppCompatActivity {
         tabHost = (TabHost)findViewById(R.id.tabHost);
         tabHost.setup();
 
-        mTabSpec = tabHost.newTabSpec("01");
+        mTabSpec = tabHost.newTabSpec("tab01");
         mTabSpec.setContent(R.id.tab1);
         mTabSpec.setIndicator("get info");
         tabHost.addTab(mTabSpec);
 
-        mTabSpec = tabHost.newTabSpec("02");
+        mTabSpec = tabHost.newTabSpec("tab02");
         mTabSpec.setContent(R.id.tab2);
         mTabSpec.setIndicator("triangle counting");
         tabHost.addTab(mTabSpec);
 
+        mTabSpec = tabHost.newTabSpec("tab03");
+        mTabSpec.setContent(R.id.tab3);
+        mTabSpec.setIndicator("test");
+        tabHost.addTab(mTabSpec);
     }
 
     public void scan_start(View view) {
