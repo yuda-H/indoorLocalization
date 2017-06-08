@@ -42,7 +42,16 @@
                         android:id="@+id/switch1"
                         android:layout_width="166dp"
                         android:layout_height="wrap_content"
-                        android:text="Switch" />
+                        android:text="Switch"
+                        tools:ignore="HardcodedText"
+                        android:onClick="mSwitch"/>
+
+                    <TextView
+                        android:id="@+id/textView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="TextView" />
+
                 </LinearLayout>
 
                 <LinearLayout

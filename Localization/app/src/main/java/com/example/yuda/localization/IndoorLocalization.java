@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Switch;
 import android.widget.TabHost;
 import android.widget.TextView;
 
@@ -23,12 +24,13 @@ public class IndoorLocalization extends AppCompatActivity {
     TabHost tabHost;
     TabHost.TabSpec mTabSpec;
     WifiManager mWifiManager;
-    TextView txt_timer,scanOrNot,txt_baseInfo;
+    TextView txt_timer,scanOrNot,txt_baseInfo,textView;
     Handler handler;
     String[][] base, dataArray;
     String[] databae_BSSID;
     FirebaseDatabase mdatabase;
     DatabaseReference mRef;
+    Switch mSwitch;
 
     @Override
     protected void onPause() {
@@ -48,6 +50,8 @@ public class IndoorLocalization extends AppCompatActivity {
         mRef = mdatabase.getReference("AP");
         getDataListener();
         databae_BSSID = new String[]{"c8:3a:35:28:56:b0"};
+        mSwitch = (Switch)findViewById(R.id.switch1);
+        textView=(TextView)findViewById(R.id.textView);
     }
 
 
@@ -70,6 +74,7 @@ public class IndoorLocalization extends AppCompatActivity {
         mTabSpec.setIndicator("test");
         tabHost.addTab(mTabSpec);
     }
+
 
     public void scan_start(View view) {
         txt_timer = (TextView)findViewById(R.id.txt_tab1);
@@ -221,4 +226,7 @@ public class IndoorLocalization extends AppCompatActivity {
         }
         txt_baseInfo.setText(text);
     }
+
+
+
 }
