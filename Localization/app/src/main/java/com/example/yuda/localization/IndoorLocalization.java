@@ -3,6 +3,7 @@ package com.example.yuda.localization;
 import android.content.Context;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,14 +18,23 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+
+import jxl.Workbook;
+import jxl.write.Label;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
+import jxl.write.WriteException;
+import jxl.write.biff.RowsExceededException;
 
 public class IndoorLocalization extends AppCompatActivity {
     TabHost tabHost;
     TabHost.TabSpec mTabSpec;
     WifiManager mWifiManager;
-    TextView txt_timer,scanOrNot,txt_baseInfo,textView;
+    TextView txtScanWifiResult,scanOrNot,txt_baseInfo;
     Handler handler;
     String[][] base, dataArray;
     String[] databae_BSSID;
@@ -50,10 +60,35 @@ public class IndoorLocalization extends AppCompatActivity {
         mRef = mdatabase.getReference("AP");
         getDataListener();
         databae_BSSID = new String[]{"c8:3a:35:28:56:b0"};
-        mSwitch = (Switch)findViewById(R.id.switch1);
-        textView=(TextView)findViewById(R.id.textView);
+        mSwitch = (Switch)findViewById(R.id.swcScan);
+
+
+        File sdCard= Environment.getExternalStorageDirectory();
+        String path = sdCard.getPath()+"/Documents/"+"WifiDataSet";
+        File file = new File(path);
+        file.mkdir();
+
+        try {
+            WritableWorkbook book = Workbook.createWorkbook(new File(path+"/"+"wifiData.xls"));
+            WritableSheet sheet = book.createSheet(" ", 0);
+            Label label = new Label(0, 0, " ");
+            sheet.addCell(label);
+            jxl.write.Number number = new jxl.write.Number(1, 0, 654654654564.22);
+            sheet.addCell(number);
+            book.write();
+            book.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (RowsExceededException e) {
+            e.printStackTrace();
+        } catch (WriteException e) {
+            e.printStackTrace();
+        }
     }
 
+    public void setTable(int x, int y, String text) {
+
+    }
 
     public void setTabHost() {
         tabHost = (TabHost)findViewById(R.id.tabHost);
@@ -76,23 +111,24 @@ public class IndoorLocalization extends AppCompatActivity {
     }
 
 
-    public void scan_start(View view) {
-        txt_timer = (TextView)findViewById(R.id.txt_tab1);
-        scanOrNot = (TextView)findViewById(R.id.txt_tab2);
-        scanOrNot.setText("你正在掃描了");
-        if (Arrays.deepToString(dataArray).equals("null")) {
-            txt_timer.setText("請確認您有連上網路以下載所需資料，並重新開始掃描");
+    public void mSwitch(View view) {
+        if (mSwitch.isChecked()) {
+            txtScanWifiResult = (TextView)findViewById(R.id.txtScanWifiResult);
+            scanOrNot = (TextView)findViewById(R.id.txt_tab2);
+            scanOrNot.setText("你正在掃描了");
+            if (Arrays.deepToString(dataArray).equals("null")) {
+                txtScanWifiResult.setText("請確認您有連上網路以下載所需資料，並重新開始掃描");
+                mSwitch.setChecked(false);
+            } else {
+                handler.post(runnable);
+            }
         } else {
-            handler.post(runnable);
+            txtScanWifiResult = (TextView)findViewById(R.id.txtScanWifiResult);
+            scanOrNot = (TextView)findViewById(R.id.txt_tab2);
+            scanOrNot.setText("你已經結束掃描了");
+            handler.removeCallbacks(runnable);
+            txtScanWifiResult.setText("");
         }
-    }
-
-    public void scan_stop(View view) {
-        txt_timer = (TextView)findViewById(R.id.txt_tab1);
-        scanOrNot = (TextView)findViewById(R.id.txt_tab2);
-        scanOrNot.setText("你已經結束掃描了");
-        handler.removeCallbacks(runnable);
-
     }
 
     public void getDataListener() {
@@ -207,7 +243,7 @@ public class IndoorLocalization extends AppCompatActivity {
             }catch (Exception e) {
                 e.printStackTrace();
             }
-            txt_timer.setText(sss);
+            txtScanWifiResult.setText(sss);
             base = wifiChoosing(base);
             wifiSorting(base);
             printArray(base);
@@ -218,9 +254,9 @@ public class IndoorLocalization extends AppCompatActivity {
     public void printArray(String[][] arr) {
         StringBuilder text = new StringBuilder();
         text.append("BSSID                       \tscanRSSI\tdataRSSI\t\t\tx\t\t\t\ty\n");
-        for (int i=0; i<arr.length; i++) {
-            for (int j=0; j<arr[0].length; j++) {
-                text.append(arr[i][j]).append("\t\t\t");
+        for (String[] anArr : arr) {
+            for (int j = 0; j < arr[0].length; j++) {
+                text.append(anArr[j]).append("\t\t\t");
             }
             text.append("\n");
         }
