@@ -8,6 +8,8 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TabHost;
 import android.widget.TextView;
@@ -34,33 +36,36 @@ public class IndoorLocalization extends AppCompatActivity {
     TabHost tabHost;
     TabHost.TabSpec mTabSpec;
     WifiManager mWifiManager;
-    TextView txtScanWifiResult,scanOrNot,txt_baseInfo;
-    Handler handler;
-    String[][] base, dataArray;
-    String[] databae_BSSID;
+    TextView tvScanWifiResult,tvScanOrNot,tvBaseInfo;
+    Handler mHandler;
+    String[][] aaryScanWifiInfo, aaryDatabaseInfo;
+    String[] aryWifiBssidInSpinner;
     FirebaseDatabase mdatabase;
     DatabaseReference mRef;
-    Switch mSwitch;
+    Switch mSwitchForScanning;
+    Spinner mSpinnerForChooseBssid;
 
     @Override
     protected void onPause() {
         super.onPause();
         //Stop thread when you leave this app
-        handler.removeCallbacks(runnable);
+        mSwitchForScanning.setChecked(false);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_indoor_localization);
+
         mWifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        setTabHost();
-        handler = new Handler();
+        mHandler = new Handler();
         mdatabase = FirebaseDatabase.getInstance();
         mRef = mdatabase.getReference("AP");
+        mSwitchForScanning = (Switch)findViewById(R.id.swcScan);
+        mSpinnerForChooseBssid = (Spinner)findViewById(R.id.spinChooseWifi);
+        setTabHost();
         getDataListener();
-        databae_BSSID = new String[]{"c8:3a:35:28:56:b0"};
-        mSwitch = (Switch)findViewById(R.id.swcScan);
+
 
 
         File sdCard= Environment.getExternalStorageDirectory();
@@ -70,11 +75,14 @@ public class IndoorLocalization extends AppCompatActivity {
 
         try {
             WritableWorkbook book = Workbook.createWorkbook(new File(path+"/"+"wifiData.xls"));
-            WritableSheet sheet = book.createSheet(" ", 0);
-            Label label = new Label(0, 0, " ");
+            WritableSheet sheet = book.createSheet("11:65:fn:55", 0);
+            Label label = new Label(0, 4, " ijuh");
             sheet.addCell(label);
             jxl.write.Number number = new jxl.write.Number(1, 0, 654654654564.22);
             sheet.addCell(number);
+            WritableSheet sheet2 = book.createSheet(" 22", 0);
+            jxl.write.Number number2 = new jxl.write.Number(1, 0, 3654654);
+            sheet2.addCell(number2);
             book.write();
             book.close();
         } catch (IOException e) {
@@ -84,7 +92,40 @@ public class IndoorLocalization extends AppCompatActivity {
         } catch (WriteException e) {
             e.printStackTrace();
         }
+
     }
+
+    public class jxlFile {
+        WritableWorkbook book;
+        File file;
+        WritableSheet sheet;
+        Label label;
+        jxl.write.Number number;
+        File sdCard= Environment.getExternalStorageDirectory();
+        String path = sdCard.getPath()+"/Documents/"+"WifiDataSet";
+        private void setFile() {
+            file = new File(path);
+            file.mkdir();
+        }
+        private void setBook() throws IOException {
+            book = Workbook.createWorkbook(new File(path+"/"+"wifiData.xls"));
+        }
+        private void setSheet(String sheetName) {
+            sheet = book.createSheet(sheetName, 0);
+        }
+        private void setCell(int x,int y, String string) throws WriteException {
+            label = new Label(x, y, string);
+            sheet.addCell(label);
+        }
+        private void setCell(int x,int y, int num) throws WriteException {
+            number = new jxl.write.Number(x, y, num);
+            sheet.addCell(number);
+        }
+
+    }
+
+
+
 
     public void setTable(int x, int y, String text) {
 
@@ -112,22 +153,22 @@ public class IndoorLocalization extends AppCompatActivity {
 
 
     public void mSwitch(View view) {
-        if (mSwitch.isChecked()) {
-            txtScanWifiResult = (TextView)findViewById(R.id.txtScanWifiResult);
-            scanOrNot = (TextView)findViewById(R.id.txt_tab2);
-            scanOrNot.setText("你正在掃描了");
-            if (Arrays.deepToString(dataArray).equals("null")) {
-                txtScanWifiResult.setText("請確認您有連上網路以下載所需資料，並重新開始掃描");
-                mSwitch.setChecked(false);
+        if (mSwitchForScanning.isChecked()) {
+            tvScanWifiResult = (TextView)findViewById(R.id.txtScanWifiResult);
+            tvScanOrNot = (TextView)findViewById(R.id.txt_tab2);
+            tvScanOrNot.setText("你正在掃描了");
+            if (Arrays.deepToString(aaryDatabaseInfo).equals("null")) {
+                tvScanWifiResult.setText("請確認您有連上網路以下載所需資料，並重新開始掃描");
+                mSwitchForScanning.setChecked(false);
             } else {
-                handler.post(runnable);
+                mHandler.post(runnable);
             }
         } else {
-            txtScanWifiResult = (TextView)findViewById(R.id.txtScanWifiResult);
-            scanOrNot = (TextView)findViewById(R.id.txt_tab2);
-            scanOrNot.setText("你已經結束掃描了");
-            handler.removeCallbacks(runnable);
-            txtScanWifiResult.setText("");
+            tvScanWifiResult = (TextView)findViewById(R.id.txtScanWifiResult);
+            tvScanOrNot = (TextView)findViewById(R.id.txt_tab2);
+            tvScanOrNot.setText("你已經結束掃描了");
+            mHandler.removeCallbacks(runnable);
+            tvScanWifiResult.setText("");
         }
     }
 
@@ -135,18 +176,18 @@ public class IndoorLocalization extends AppCompatActivity {
         mRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                dataArray = new String[(int)dataSnapshot.getChildrenCount()][4];
+                aaryDatabaseInfo = new String[(int)dataSnapshot.getChildrenCount()][4];
                 // {[BSSID, x, y]}
-                for (int i=1; i<=dataArray.length; i++) {
-                    for (int j=0; j<dataArray[0].length; j++) {
+                for (int i=1; i<=aaryDatabaseInfo.length; i++) {
+                    for (int j=0; j<aaryDatabaseInfo[0].length; j++) {
                         switch (j) {
-                            case 0: dataArray[i-1][j] = dataSnapshot.child("AP"+i).child("BSSID").getValue()+"";
+                            case 0: aaryDatabaseInfo[i-1][j] = dataSnapshot.child("AP"+i).child("BSSID").getValue()+"";
                                 break;
-                            case 1: dataArray[i-1][j] = dataSnapshot.child("AP"+i).child("RSSI_MAX").getValue()+"";
+                            case 1: aaryDatabaseInfo[i-1][j] = dataSnapshot.child("AP"+i).child("RSSI_MAX").getValue()+"";
                                 break;
-                            case 2: dataArray[i-1][j] = dataSnapshot.child("AP"+i).child("x").getValue()+"";
+                            case 2: aaryDatabaseInfo[i-1][j] = dataSnapshot.child("AP"+i).child("x").getValue()+"";
                                 break;
-                            case 3: dataArray[i-1][j] = dataSnapshot.child("AP"+i).child("y").getValue()+"";
+                            case 3: aaryDatabaseInfo[i-1][j] = dataSnapshot.child("AP"+i).child("y").getValue()+"";
                                 break;
 
                         }
@@ -162,27 +203,27 @@ public class IndoorLocalization extends AppCompatActivity {
     // choosing wifi BSSID if the wifi of scanning is in your database
     public String[][] wifiChoosing(String[][] scanned) {
         String[] scan = new String[scanned.length];
-        String[][] choosing_result = new String[dataArray.length][5];
+        String[][] choosing_result = new String[aaryDatabaseInfo.length][5];
         //[BSSID, scan_RSSI, data_RSSI, data_x, data_y]
         for (int i=0; i<scanned.length; i++) {                  //把scanned(2D)的BSSID抓到scanList
             scan[i] = scanned[i][0];
         }
         List<String> scanList = Arrays.asList(scan);
-        for (int i=0; i<dataArray.length; i++) {
-            if (scanList.contains(dataArray[i][0])) {           //如果從掃描的結果中有包含database的第i個  i=0 1 2 ...
-                int k = scanList.indexOf(dataArray[i][0]);      //則取得scanList與第i個BSSID一樣的index(也會等於scanned的index)
-                choosing_result[i][0] = dataArray[i][0];        //結果的第0個位置放database的第i個BSSID
+        for (int i=0; i<aaryDatabaseInfo.length; i++) {
+            if (scanList.contains(aaryDatabaseInfo[i][0])) {           //如果從掃描的結果中有包含database的第i個  i=0 1 2 ...
+                int k = scanList.indexOf(aaryDatabaseInfo[i][0]);      //則取得scanList與第i個BSSID一樣的index(也會等於scanned的index)
+                choosing_result[i][0] = aaryDatabaseInfo[i][0];        //結果的第0個位置放database的第i個BSSID
                 choosing_result[i][1] = scanned[k][1];          //結果的第1個位置放當前的RSSI 也就是scanned[k]
-                choosing_result[i][2] = dataArray[i][1];        //結果的第2個位置放database的第i個RSSI_MAX
-                choosing_result[i][3] = dataArray[i][2];        //結果的第3個位置放database的第i個RSSI的x
-                choosing_result[i][4] = dataArray[i][3];        //結果的第4個位置放database的第i個RSSI的y
+                choosing_result[i][2] = aaryDatabaseInfo[i][1];        //結果的第2個位置放database的第i個RSSI_MAX
+                choosing_result[i][3] = aaryDatabaseInfo[i][2];        //結果的第3個位置放database的第i個RSSI的x
+                choosing_result[i][4] = aaryDatabaseInfo[i][3];        //結果的第4個位置放database的第i個RSSI的y
             }
             else {
-                choosing_result[i][0] = dataArray[i][0];
+                choosing_result[i][0] = aaryDatabaseInfo[i][0];
                 choosing_result[i][1] = -128+"";
-                choosing_result[i][2] = dataArray[i][1];
-                choosing_result[i][3] = dataArray[i][2];
-                choosing_result[i][4] = dataArray[i][3];
+                choosing_result[i][2] = aaryDatabaseInfo[i][1];
+                choosing_result[i][3] = aaryDatabaseInfo[i][2];
+                choosing_result[i][4] = aaryDatabaseInfo[i][3];
             }
         }
         return choosing_result;
@@ -220,6 +261,9 @@ public class IndoorLocalization extends AppCompatActivity {
         return apBase;
     }
 
+
+
+
     // scan wifi per second
     final Runnable runnable = new Runnable() {
         @Override
@@ -228,28 +272,37 @@ public class IndoorLocalization extends AppCompatActivity {
             sss.append("");
             mWifiManager.startScan();
             List<ScanResult> resultList = mWifiManager.getScanResults();
-            txt_baseInfo = (TextView)findViewById(R.id.txt_baseInfo);
-            base = new String[resultList.size()][];
+            tvBaseInfo = (TextView)findViewById(R.id.txt_baseInfo);
+            aaryScanWifiInfo = new String[resultList.size()][];
+            aryWifiBssidInSpinner = new String[resultList.size()];
             try {
                 for (int i = 0; i < resultList.size(); i++) {
                     ScanResult result = resultList.get(i);
-                    base[i] = new String[2];
-                    base[i][0] = result.BSSID;
-                    base[i][1] = result.level+"";
+                    aaryScanWifiInfo[i] = new String[2];
+                    aaryScanWifiInfo[i][0] = result.BSSID;
+                    aaryScanWifiInfo[i][1] = result.level+"";
 
                     //sss +=  "\n" + result.SSID + "\n" + result.BSSID + "\b\b\b" + result.level + "\n";
                     sss.append("\n").append(result.SSID).append("\n").append(result.BSSID).append("\b\b\b").append(result.level).append("\n");
+
+
+                    aryWifiBssidInSpinner[i] = result.BSSID+"\t__"+result.SSID;
                 }
             }catch (Exception e) {
                 e.printStackTrace();
             }
-            txtScanWifiResult.setText(sss);
-            base = wifiChoosing(base);
-            wifiSorting(base);
-            printArray(base);
-            handler.postDelayed(this, 500);
+            tvScanWifiResult.setText(sss);
+            aaryScanWifiInfo = wifiChoosing(aaryScanWifiInfo);
+            wifiSorting(aaryScanWifiInfo);
+            printArray(aaryScanWifiInfo);
+            final  String[] wifiBSSID = aryWifiBssidInSpinner;
+            ArrayAdapter<String> wifiBssidList = new ArrayAdapter<>(IndoorLocalization.this,android.R.layout.simple_spinner_dropdown_item,wifiBSSID);
+            mSpinnerForChooseBssid.setAdapter(wifiBssidList);
+            mHandler.postDelayed(this, 3000);
         }
     };
+
+
 
     public void printArray(String[][] arr) {
         StringBuilder text = new StringBuilder();
@@ -260,9 +313,12 @@ public class IndoorLocalization extends AppCompatActivity {
             }
             text.append("\n");
         }
-        txt_baseInfo.setText(text);
+        tvBaseInfo.setText(text);
     }
 
 
+    public void create() {
+
+    }
 
 }
