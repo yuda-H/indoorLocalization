@@ -71,15 +71,31 @@ public class IndoorLocalization extends AppCompatActivity {
         try {
             tvScanOrNot = (TextView)findViewById(R.id.txtScanWifiResult);
             jxlFile mFile = new jxlFile();
+            mFile.setFolderPath("wifiDataSet");
+            mFile.setFilePath("wifiData.xls");
             mFile.setFile();
-            mFile.getBook();
-
+            mFile.getWorkBook();
             tvScanOrNot.setText(mFile.getCell("01:0203",0,2));
+
+
+            jxlFile m2File = new jxlFile();
+            m2File.setFolderPath("wifiDataSet00");
+            m2File.setFilePath("copyWifiData.xls");
+            m2File.setNewBook();
+            m2File.setNewSheet("01");
+            m2File.setNewSheet("02");
+            m2File.setNewCell("02",0,0,255);
+            m2File.setNewCell("01",0,0,"55555");
+            m2File.Finish();
+
+
 
 
         } catch (IOException e) {
             e.printStackTrace();
         }  catch (BiffException e) {
+            e.printStackTrace();
+        } catch (WriteException e) {
             e.printStackTrace();
         }
     }
@@ -89,66 +105,69 @@ public class IndoorLocalization extends AppCompatActivity {
     }
 
     public class jxlFile {
-        WritableWorkbook writableWorkbook = null;
-        Workbook workbook = null;
-        File file = null;
-        WritableSheet writableSheet = null;
-        jxl.write.Label label = null;
-        jxl.write.Number number = null;
-        String folderPath = null, filePath = null;
+        WritableWorkbook writableWorkbook;
+        Workbook workbook;
+        File file;
+        WritableSheet writableSheet;
+        jxl.write.Label label;
+        jxl.write.Number number;
+        String folderPath, filePath;
 
-        private void setFolderPath(String folderPath) {
-            folderPath = Environment.getExternalStorageDirectory().getPath()+"/Documents/"+folderPath;
-        }
-        private String getFolderPath() {
-            return folderPath;
-        }
-        private void setFilePath(String fileNaame) {
-            filePath = folderPath+"/"+fileNaame;
-        }
-        private String getFilePath() {
-            return filePath;
-        }
         private void setFile() {
             file = new File(filePath);
             file.mkdir();
         }
+        private void setFolderPath(String folderPath) {
+            this.folderPath = Environment.getExternalStorageDirectory().getPath()+"/Documents/"+folderPath;
+        }
+        private String getFolderPath() {
+            return folderPath;
+        }
+        private void setFilePath(String fileName) {
+            this.filePath = folderPath+"/"+fileName;
+        }
+        private String getFilePath() {
+            return filePath;
+        }
         private void setNewBook() throws IOException {
-            writableWorkbook = Workbook.createWorkbook(new File(folderPath+"/"+"wifiData.xls"));
+            this.writableWorkbook = Workbook.createWorkbook(new File(filePath));
         }
         private void setNewSheet(String sheetName) {
             writableSheet = writableWorkbook.createSheet(sheetName, 0);
         }
-        private void setNewCell(int x,int y, String string) throws WriteException {
+        private void setNewCell(String sheetName, int x,int y, String string) throws WriteException {
             label = new jxl.write.Label(x, y, string);
+            writableSheet = writableWorkbook.getSheet(sheetName);
             writableSheet.addCell(label);
         }
-        private void setNewCell(int x,int y, int num) throws WriteException {
+        private void setNewCell(String sheetName,int x,int y, int num) throws WriteException {
             number = new jxl.write.Number(x, y, num);
+            writableSheet = writableWorkbook.getSheet(sheetName);
             writableSheet.addCell(number);
         }
-        private void setFinish() throws IOException, WriteException {
+        private void Finish() throws IOException, WriteException {
             writableWorkbook.write();
             writableWorkbook.close();
+        }
+
+        private void getWorkBook() throws IOException, BiffException {
+            this.workbook = Workbook.getWorkbook(new File(this.filePath));
+        }
+        private Sheet getSheet(String sheetName) {
+            return this.workbook.getSheet(textAdjusting(sheetName));
+        }
+        private String getCell(String sheet, int x, int y) {
+            return getSheet(sheet).getCell(x,y).getContents();
+        }
+
+        private void copy2WritableBook(Workbook workbook) throws IOException {
+            this.writableWorkbook = Workbook.createWorkbook(file,workbook);
         }
         private void setWritableWorkbook(Workbook workbook) throws IOException {
             folderPath = Environment.getExternalStorageDirectory().getPath()+"/Documents/"+"WifiDataSet00";
             setFile();
-            writableWorkbook = Workbook.createWorkbook(file,workbook);
+            this.writableWorkbook = Workbook.createWorkbook(file,workbook);
         }
-        private void setWritableWorkbookSheet() {
-
-        }
-        private void getBook() throws IOException, BiffException {
-            workbook = Workbook.getWorkbook(new File(folderPath+"/"+"wifiData.xls"));
-        }
-        private Sheet getSheet(String sheetName) {
-            return workbook.getSheet(textAdjusting(sheetName));
-        }
-        private String getCell( String sheet, int x, int y) {
-            return getSheet(sheet).getCell(x,y).getContents();
-        }
-
     }
 
 
