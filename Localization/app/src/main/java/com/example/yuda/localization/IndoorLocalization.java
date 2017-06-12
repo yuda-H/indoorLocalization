@@ -75,7 +75,7 @@ public class IndoorLocalization extends AppCompatActivity {
             mFile.setFilePath("wifiData.xls");
             mFile.setFile();
             mFile.getWorkBook();
-            tvScanOrNot.setText(mFile.getCell("01:0203",0,2));
+            tvScanOrNot.setText(mFile.getCell("01:0203",1,0));
 
 
             jxlFile m2File = new jxlFile();
@@ -93,9 +93,9 @@ public class IndoorLocalization extends AppCompatActivity {
 
         } catch (IOException e) {
             e.printStackTrace();
-        }  catch (BiffException e) {
+        }  catch (WriteException e) {
             e.printStackTrace();
-        } catch (WriteException e) {
+        } catch (BiffException e) {
             e.printStackTrace();
         }
     }
@@ -151,7 +151,7 @@ public class IndoorLocalization extends AppCompatActivity {
         }
 
         private void getWorkBook() throws IOException, BiffException {
-            this.workbook = Workbook.getWorkbook(new File(this.filePath));
+            this.workbook = workbook.getWorkbook(new File(this.filePath));
         }
         private Sheet getSheet(String sheetName) {
             return this.workbook.getSheet(textAdjusting(sheetName));
