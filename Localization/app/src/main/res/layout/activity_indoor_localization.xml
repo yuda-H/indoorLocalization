@@ -10,10 +10,10 @@
         android:id="@+id/tabHost"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        tools:ignore="MissingConstraints,RtlHardcoded"
+        android:layout_marginTop="1dp"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="8dp"
-        tools:layout_editor_absoluteX="8dp">
+        tools:ignore="MissingConstraints,RtlHardcoded"
+        tools:layout_editor_absoluteX="0dp">
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -36,28 +36,96 @@
                     android:id="@+id/tab3"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:weightSum="1">
 
-                    <LinearLayout
+                    <TableLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal">
+                        android:layout_height="42dp">
 
-                        <TextView
-                            android:id="@+id/textView2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.51"
-                            android:text="選取wifif AP"
-                            android:textAppearance="@android:style/TextAppearance.Material.Medium" />
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
 
-                        <Spinner
-                            android:id="@+id/spinChooseWifi"
-                            android:layout_width="277dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.14" />
+                            <TextView
+                                android:id="@+id/textView3"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_column="0"
+                                android:layout_row="0"
+                                android:text="Setting your coordinate"
+                                android:textAppearance="@android:style/TextAppearance.Material.Large" />
+                        </TableRow>
 
-                    </LinearLayout>
+                    </TableLayout>
+
+                    <TableLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                android:id="@+id/textView4"
+                                android:layout_width="40dp"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentLeft="true"
+                                android:layout_alignParentStart="true"
+                                android:layout_below="@+id/textView3"
+                                android:layout_column="0"
+                                android:layout_row="1"
+                                android:text="X"
+                                android:textAppearance="@android:style/TextAppearance.Material.Medium" />
+
+                            <EditText
+                                android:id="@+id/etX"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/textView3"
+                                android:layout_toEndOf="@+id/textView4"
+                                android:layout_toRightOf="@+id/textView4"
+                                android:ems="10"
+                                android:inputType="numberSigned" />
+                        </TableRow>
+
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                android:id="@+id/textView2"
+                                android:layout_width="40dp"
+                                android:layout_height="wrap_content"
+                                android:layout_alignLeft="@+id/textView2"
+                                android:layout_alignStart="@+id/textView2"
+                                android:text="Y"
+                                android:textAppearance="@android:style/TextAppearance.Material.Medium" />
+
+                            <EditText
+                                android:id="@+id/etY"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:ems="10"
+                                android:inputType="numberSigned" />
+
+                            <Button
+                                android:id="@+id/btnSetCoordinate"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:elevation="0dp"
+                                android:text="Button"
+                                android:onClick="btnSetCoordinate"/>
+                        </TableRow>
+
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                        </TableRow>
+                    </TableLayout>
+
                 </LinearLayout>
 
                 <LinearLayout

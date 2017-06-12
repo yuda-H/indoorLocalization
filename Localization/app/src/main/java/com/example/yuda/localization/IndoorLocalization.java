@@ -8,8 +8,7 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
+import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TabHost;
 import android.widget.TextView;
@@ -25,12 +24,13 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import jxl.Sheet;
 import jxl.Workbook;
+import jxl.read.biff.BiffException;
 import jxl.write.Label;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
-import jxl.write.biff.RowsExceededException;
 
 public class IndoorLocalization extends AppCompatActivity {
     TabHost tabHost;
@@ -39,11 +39,10 @@ public class IndoorLocalization extends AppCompatActivity {
     TextView tvScanWifiResult,tvScanOrNot,tvBaseInfo;
     Handler mHandler;
     String[][] aaryScanWifiInfo, aaryDatabaseInfo;
-    String[] aryWifiBssidInSpinner;
     FirebaseDatabase mdatabase;
     DatabaseReference mRef;
     Switch mSwitchForScanning;
-    Spinner mSpinnerForChooseBssid;
+    EditText etX, etY;
 
     @Override
     protected void onPause() {
@@ -62,67 +61,98 @@ public class IndoorLocalization extends AppCompatActivity {
         mdatabase = FirebaseDatabase.getInstance();
         mRef = mdatabase.getReference("AP");
         mSwitchForScanning = (Switch)findViewById(R.id.swcScan);
-        mSpinnerForChooseBssid = (Spinner)findViewById(R.id.spinChooseWifi);
+        etX = (EditText)findViewById(R.id.etX);
+        etY = (EditText)findViewById(R.id.etY);
         setTabHost();
         getDataListener();
 
 
 
-        File sdCard= Environment.getExternalStorageDirectory();
-        String path = sdCard.getPath()+"/Documents/"+"WifiDataSet";
-        File file = new File(path);
-        file.mkdir();
-
         try {
-            WritableWorkbook book = Workbook.createWorkbook(new File(path+"/"+"wifiData.xls"));
-            WritableSheet sheet = book.createSheet("11:65:fn:55", 0);
-            Label label = new Label(0, 4, " ijuh");
-            sheet.addCell(label);
-            jxl.write.Number number = new jxl.write.Number(1, 0, 654654654564.22);
-            sheet.addCell(number);
-            WritableSheet sheet2 = book.createSheet(" 22", 0);
-            jxl.write.Number number2 = new jxl.write.Number(1, 0, 3654654);
-            sheet2.addCell(number2);
-            book.write();
-            book.close();
+            tvScanOrNot = (TextView)findViewById(R.id.txtScanWifiResult);
+            jxlFile mFile = new jxlFile();
+            mFile.setFile();
+            mFile.getBook();
+
+            tvScanOrNot.setText(mFile.getCell("01:0203",0,2));
+
+
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (RowsExceededException e) {
-            e.printStackTrace();
-        } catch (WriteException e) {
+        }  catch (BiffException e) {
             e.printStackTrace();
         }
+    }
 
+    public void btnSetCoordinate(View view) {
+        tvScanOrNot.setText(etX.getText().toString());
     }
 
     public class jxlFile {
-        WritableWorkbook book;
-        File file;
-        WritableSheet sheet;
-        Label label;
-        jxl.write.Number number;
-        File sdCard= Environment.getExternalStorageDirectory();
-        String path = sdCard.getPath()+"/Documents/"+"WifiDataSet";
+        WritableWorkbook writableWorkbook = null;
+        Workbook workbook = null;
+        File file = null;
+        WritableSheet writableSheet = null;
+        jxl.write.Label label = null;
+        jxl.write.Number number = null;
+        String folderPath = null, filePath = null;
+
+        private void setFolderPath(String folderPath) {
+            folderPath = Environment.getExternalStorageDirectory().getPath()+"/Documents/"+folderPath;
+        }
+        private String getFolderPath() {
+            return folderPath;
+        }
+        private void setFilePath(String fileNaame) {
+            filePath = folderPath+"/"+fileNaame;
+        }
+        private String getFilePath() {
+            return filePath;
+        }
         private void setFile() {
-            file = new File(path);
+            file = new File(filePath);
             file.mkdir();
         }
-        private void setBook() throws IOException {
-            book = Workbook.createWorkbook(new File(path+"/"+"wifiData.xls"));
+        private void setNewBook() throws IOException {
+            writableWorkbook = Workbook.createWorkbook(new File(folderPath+"/"+"wifiData.xls"));
         }
-        private void setSheet(String sheetName) {
-            sheet = book.createSheet(sheetName, 0);
+        private void setNewSheet(String sheetName) {
+            writableSheet = writableWorkbook.createSheet(sheetName, 0);
         }
-        private void setCell(int x,int y, String string) throws WriteException {
-            label = new Label(x, y, string);
-            sheet.addCell(label);
+        private void setNewCell(int x,int y, String string) throws WriteException {
+            label = new jxl.write.Label(x, y, string);
+            writableSheet.addCell(label);
         }
-        private void setCell(int x,int y, int num) throws WriteException {
+        private void setNewCell(int x,int y, int num) throws WriteException {
             number = new jxl.write.Number(x, y, num);
-            sheet.addCell(number);
+            writableSheet.addCell(number);
+        }
+        private void setFinish() throws IOException, WriteException {
+            writableWorkbook.write();
+            writableWorkbook.close();
+        }
+        private void setWritableWorkbook(Workbook workbook) throws IOException {
+            folderPath = Environment.getExternalStorageDirectory().getPath()+"/Documents/"+"WifiDataSet00";
+            setFile();
+            writableWorkbook = Workbook.createWorkbook(file,workbook);
+        }
+        private void setWritableWorkbookSheet() {
+
+        }
+        private void getBook() throws IOException, BiffException {
+            workbook = Workbook.getWorkbook(new File(folderPath+"/"+"wifiData.xls"));
+        }
+        private Sheet getSheet(String sheetName) {
+            return workbook.getSheet(textAdjusting(sheetName));
+        }
+        private String getCell( String sheet, int x, int y) {
+            return getSheet(sheet).getCell(x,y).getContents();
         }
 
     }
+
+
+
 
 
 
@@ -131,6 +161,7 @@ public class IndoorLocalization extends AppCompatActivity {
 
     }
 
+    // set Tab
     public void setTabHost() {
         tabHost = (TabHost)findViewById(R.id.tabHost);
         tabHost.setup();
@@ -151,7 +182,7 @@ public class IndoorLocalization extends AppCompatActivity {
         tabHost.addTab(mTabSpec);
     }
 
-
+    // control on or off for wifi scanning
     public void mSwitch(View view) {
         if (mSwitchForScanning.isChecked()) {
             tvScanWifiResult = (TextView)findViewById(R.id.txtScanWifiResult);
@@ -172,6 +203,7 @@ public class IndoorLocalization extends AppCompatActivity {
         }
     }
 
+    // get wifi info on firebase database(include BSSID, RSSID-max, x-coordinate, y-coordinate)
     public void getDataListener() {
         mRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -261,7 +293,18 @@ public class IndoorLocalization extends AppCompatActivity {
         return apBase;
     }
 
-
+    // Adjust ':' to '@' when you call getCell
+    public String textAdjusting(String string) {
+        char aryString[] = new char[string.length()];
+        for (int i=0; i<string.length(); i++) {
+            if (string.charAt(i) == ':') {
+                aryString[i] = '@';
+            } else {
+                aryString[i] = string.charAt(i);
+            }
+        }
+        return String.valueOf(aryString);
+    }
 
 
     // scan wifi per second
@@ -274,7 +317,7 @@ public class IndoorLocalization extends AppCompatActivity {
             List<ScanResult> resultList = mWifiManager.getScanResults();
             tvBaseInfo = (TextView)findViewById(R.id.txt_baseInfo);
             aaryScanWifiInfo = new String[resultList.size()][];
-            aryWifiBssidInSpinner = new String[resultList.size()];
+
             try {
                 for (int i = 0; i < resultList.size(); i++) {
                     ScanResult result = resultList.get(i);
@@ -282,11 +325,7 @@ public class IndoorLocalization extends AppCompatActivity {
                     aaryScanWifiInfo[i][0] = result.BSSID;
                     aaryScanWifiInfo[i][1] = result.level+"";
 
-                    //sss +=  "\n" + result.SSID + "\n" + result.BSSID + "\b\b\b" + result.level + "\n";
                     sss.append("\n").append(result.SSID).append("\n").append(result.BSSID).append("\b\b\b").append(result.level).append("\n");
-
-
-                    aryWifiBssidInSpinner[i] = result.BSSID+"\t__"+result.SSID;
                 }
             }catch (Exception e) {
                 e.printStackTrace();
@@ -295,9 +334,6 @@ public class IndoorLocalization extends AppCompatActivity {
             aaryScanWifiInfo = wifiChoosing(aaryScanWifiInfo);
             wifiSorting(aaryScanWifiInfo);
             printArray(aaryScanWifiInfo);
-            final  String[] wifiBSSID = aryWifiBssidInSpinner;
-            ArrayAdapter<String> wifiBssidList = new ArrayAdapter<>(IndoorLocalization.this,android.R.layout.simple_spinner_dropdown_item,wifiBSSID);
-            mSpinnerForChooseBssid.setAdapter(wifiBssidList);
             mHandler.postDelayed(this, 3000);
         }
     };
@@ -317,8 +353,6 @@ public class IndoorLocalization extends AppCompatActivity {
     }
 
 
-    public void create() {
 
-    }
 
 }
