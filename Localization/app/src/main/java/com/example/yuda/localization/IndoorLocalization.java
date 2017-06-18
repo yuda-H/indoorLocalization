@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
 import jxl.read.biff.BiffException;
@@ -43,12 +44,25 @@ public class IndoorLocalization extends AppCompatActivity {
     DatabaseReference mRef;
     Switch mSwitchForScanning;
     EditText etX, etY;
+    jxlFile readBook, writeBook;
+    String[][] choosing_result;
 
     @Override
     protected void onPause() {
         super.onPause();
         //Stop thread when you leave this app
         mSwitchForScanning.setChecked(false);
+        try {
+            writeBook.Finish();
+            readBook.workbook.close();
+            writeBook.saveToReadbook(readBook,writeBook);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (WriteException e) {
+            e.printStackTrace();
+        } catch (BiffException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -67,117 +81,133 @@ public class IndoorLocalization extends AppCompatActivity {
         getDataListener();
 
 
-
+        readBook = new jxlFile();
         try {
-            tvScanOrNot = (TextView)findViewById(R.id.txtScanWifiResult);
-            jxlFile mFile = new jxlFile();
-            mFile.setFolderPath("wifiDataSet");
-            mFile.setFilePath("wifiData.xls");
-            mFile.setFile();
-            mFile.getWorkBook();
-            tvScanOrNot.setText(mFile.getCell("01:0203",1,0));
-
-
-            jxlFile m2File = new jxlFile();
-            m2File.setFolderPath("wifiDataSet00");
-            m2File.setFilePath("copyWifiData.xls");
-            m2File.setNewBook();
-            m2File.setNewSheet("01");
-            m2File.setNewSheet("02");
-            m2File.setNewCell("02",0,0,255);
-            m2File.setNewCell("01",0,0,"55555");
-            m2File.Finish();
-
-
-
-
+            readBook.setFolderPath("WifiDataSet");
+            readBook.setFileName("wifiData.xls");
+            readBook.getReadBook();
         } catch (IOException e) {
             e.printStackTrace();
-        }  catch (WriteException e) {
+        } catch (WriteException e) {
             e.printStackTrace();
         } catch (BiffException e) {
             e.printStackTrace();
         }
+        writeBook = new jxlFile();
+        try {
+            writeBook.setFolderPath("WifiDataSet");
+            writeBook.setFileName("C.xls");
+            writeBook.setWriteBook();
+            writeBook.copyCellsFromReadToWrite(readBook,readBook.workbook,writeBook.writableWorkbook);
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (WriteException e) {
+            e.printStackTrace();
+        } catch (BiffException e) {
+            e.printStackTrace();
+        }
+
     }
 
-    public void btnSetCoordinate(View view) {
-        tvScanOrNot.setText(etX.getText().toString());
+
+    public void btnSetCoordinate(View view) throws WriteException {
+        //tvScanOrNot.setText(etX.getText().toString());
+        String x = etX.getText().toString();
+        String y = etY.getText().toString();
+        int c = writeBook.writableSheet.getColumn(0).length;
+        int r = writeBook.writableSheet.getRows();
+
+        if (choosing_result != null) {
+            for (int i = 0; i < choosing_result.length; i++) {
+                writeBook.setCell(choosing_result[i][0], c, 1, x);
+                writeBook.setCell(choosing_result[i][0], 1, r, y);
+            }
+        }
     }
 
     public class jxlFile {
+
         WritableWorkbook writableWorkbook;
         Workbook workbook;
         File file;
+        Sheet sheet;
         WritableSheet writableSheet;
         jxl.write.Label label;
         jxl.write.Number number;
         String folderPath, filePath;
 
-        private void setFile() {
-            file = new File(filePath);
-            file.mkdir();
-        }
         private void setFolderPath(String folderPath) {
             this.folderPath = Environment.getExternalStorageDirectory().getPath()+"/Documents/"+folderPath;
+            file = new File(this.folderPath);
+            if(!file.exists()) {
+                file.mkdir();
+            }
         }
-        private String getFolderPath() {
-            return folderPath;
-        }
-        private void setFilePath(String fileName) {
+        private void setFileName(String fileName) throws IOException, WriteException {
             this.filePath = folderPath+"/"+fileName;
+            file = new File(this.filePath);
+            if(!file.exists()) {
+                setWriteBook();
+                setSheet(" ");
+                setCell(" ",0,0,"");
+                Finish();
+            }
         }
-        private String getFilePath() {
-            return filePath;
+        private void getReadBook() throws IOException, BiffException, WriteException {
+            this.workbook = workbook.getWorkbook(new File(this.filePath));
         }
-        private void setNewBook() throws IOException {
+        private void setWriteBook() throws IOException {
             this.writableWorkbook = Workbook.createWorkbook(new File(filePath));
         }
-        private void setNewSheet(String sheetName) {
+        private void setSheet(String sheetName) {
             writableSheet = writableWorkbook.createSheet(sheetName, 0);
         }
-        private void setNewCell(String sheetName, int x,int y, String string) throws WriteException {
+        private Sheet getSheet(String sheetName) {
+            this.sheet = this.workbook.getSheet(textAdjusting(sheetName));
+            return this.sheet;
+        }
+        private void copyCellsFromReadToWrite(jxlFile r,Workbook readBook, WritableWorkbook writeBook) throws WriteException, IOException, BiffException {
+            int readSheetNumber = readBook.getNumberOfSheets();
+            for (int i=0; i<readSheetNumber; i++) {
+                writableSheet = writeBook.createSheet(readBook.getSheet(i).getName().toString(),0);
+                for (int m=0; m<readBook.getSheet(i).getColumns(); m++) {
+                    for (int n=0; n<readBook.getSheet(i).getRows(); n++) {
+                        setCell(readBook.getSheet(i).getName().toString(),m,n,r.getCell(readBook.getSheet(i).getName().toString(),m,n));
+                    }
+                }
+            }
+        }
+        private void setCell(String sheetName, int x,int y, String string) throws WriteException {
             label = new jxl.write.Label(x, y, string);
-            writableSheet = writableWorkbook.getSheet(sheetName);
+            writableSheet = writableWorkbook.getSheet(textAdjusting(sheetName));
             writableSheet.addCell(label);
         }
-        private void setNewCell(String sheetName,int x,int y, int num) throws WriteException {
+        private void setCell(String sheetName,int x,int y, int num) throws WriteException {
             number = new jxl.write.Number(x, y, num);
-            writableSheet = writableWorkbook.getSheet(sheetName);
+            writableSheet = writableWorkbook.getSheet(textAdjusting(sheetName));
             writableSheet.addCell(number);
+        }
+        private String getCell(String sheetName, int x, int y) {
+            getSheet(sheetName);
+            if(this.sheet.getCell(x,y).getContents()!=null) {
+                return this.sheet.getCell(x,y).getContents();
+            } else {
+                return "null";
+            }
+
+            //return this.sheet.getCell(x,y).getContents()+"";
+        }
+        private void saveToReadbook(jxlFile readBook, jxlFile writeBook) throws IOException, BiffException, WriteException {
+            writeBook.getReadBook();
+            readBook.writableWorkbook = Workbook.createWorkbook(new File(readBook.filePath),writeBook.workbook);
+            readBook.Finish();
         }
         private void Finish() throws IOException, WriteException {
             writableWorkbook.write();
             writableWorkbook.close();
         }
-
-        private void getWorkBook() throws IOException, BiffException {
-            this.workbook = workbook.getWorkbook(new File(this.filePath));
-        }
-        private Sheet getSheet(String sheetName) {
-            return this.workbook.getSheet(textAdjusting(sheetName));
-        }
-        private String getCell(String sheet, int x, int y) {
-            return getSheet(sheet).getCell(x,y).getContents();
-        }
-
-        private void copy2WritableBook(Workbook workbook) throws IOException {
-            this.writableWorkbook = Workbook.createWorkbook(file,workbook);
-        }
-        private void setWritableWorkbook(Workbook workbook) throws IOException {
-            folderPath = Environment.getExternalStorageDirectory().getPath()+"/Documents/"+"WifiDataSet00";
-            setFile();
-            this.writableWorkbook = Workbook.createWorkbook(file,workbook);
-        }
-    }
-
-
-
-
-
-
-
-    public void setTable(int x, int y, String text) {
-
     }
 
     // set Tab
@@ -233,6 +263,9 @@ public class IndoorLocalization extends AppCompatActivity {
                     for (int j=0; j<aaryDatabaseInfo[0].length; j++) {
                         switch (j) {
                             case 0: aaryDatabaseInfo[i-1][j] = dataSnapshot.child("AP"+i).child("BSSID").getValue()+"";
+                                if (readBook.getSheet(aaryDatabaseInfo[i-1][j]) == null) {
+                                    writeBook.setSheet(aaryDatabaseInfo[i-1][j]);
+                                }
                                 break;
                             case 1: aaryDatabaseInfo[i-1][j] = dataSnapshot.child("AP"+i).child("RSSI_MAX").getValue()+"";
                                 break;
@@ -254,7 +287,7 @@ public class IndoorLocalization extends AppCompatActivity {
     // choosing wifi BSSID if the wifi of scanning is in your database
     public String[][] wifiChoosing(String[][] scanned) {
         String[] scan = new String[scanned.length];
-        String[][] choosing_result = new String[aaryDatabaseInfo.length][5];
+        choosing_result = new String[aaryDatabaseInfo.length][5];
         //[BSSID, scan_RSSI, data_RSSI, data_x, data_y]
         for (int i=0; i<scanned.length; i++) {                  //把scanned(2D)的BSSID抓到scanList
             scan[i] = scanned[i][0];
@@ -276,6 +309,8 @@ public class IndoorLocalization extends AppCompatActivity {
                 choosing_result[i][3] = aaryDatabaseInfo[i][2];
                 choosing_result[i][4] = aaryDatabaseInfo[i][3];
             }
+
+
         }
         return choosing_result;
     }
@@ -353,7 +388,10 @@ public class IndoorLocalization extends AppCompatActivity {
             aaryScanWifiInfo = wifiChoosing(aaryScanWifiInfo);
             wifiSorting(aaryScanWifiInfo);
             printArray(aaryScanWifiInfo);
-            mHandler.postDelayed(this, 3000);
+
+
+
+            mHandler.postDelayed(this, 5000);
         }
     };
 
