@@ -48,7 +48,7 @@
                             android:layout_height="match_parent">
 
                             <TextView
-                                android:id="@+id/textView3"
+                                android:id="@+id/tvRecoding"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_column="0"
@@ -73,7 +73,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentLeft="true"
                                 android:layout_alignParentStart="true"
-                                android:layout_below="@+id/textView3"
+                                android:layout_below="@+id/tvRecoding"
                                 android:layout_column="0"
                                 android:layout_row="1"
                                 android:text="X"
@@ -83,7 +83,7 @@
                                 android:id="@+id/etX"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_below="@+id/textView3"
+                                android:layout_below="@+id/tvRecoding"
                                 android:layout_toEndOf="@+id/textView4"
                                 android:layout_toRightOf="@+id/textView4"
                                 android:ems="10"

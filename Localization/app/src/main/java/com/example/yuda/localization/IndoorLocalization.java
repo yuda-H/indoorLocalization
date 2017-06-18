@@ -37,7 +37,7 @@ public class IndoorLocalization extends AppCompatActivity {
     TabHost tabHost;
     TabHost.TabSpec mTabSpec;
     WifiManager mWifiManager;
-    TextView tvScanWifiResult,tvScanOrNot,tvBaseInfo;
+    TextView tvScanWifiResult,tvScanOrNot,tvBaseInfo, tvRecoding;
     Handler mHandler;
     String[][] aaryScanWifiInfo, aaryDatabaseInfo;
     FirebaseDatabase mdatabase;
@@ -46,7 +46,10 @@ public class IndoorLocalization extends AppCompatActivity {
     EditText etX, etY;
     jxlFile readBook, writeBook;
     String[][] choosing_result;
-
+    boolean recoding=false;
+    int recordingNumber = 15;
+    int re = 3;
+    int c;
     @Override
     protected void onPause() {
         super.onPause();
@@ -75,6 +78,7 @@ public class IndoorLocalization extends AppCompatActivity {
         mdatabase = FirebaseDatabase.getInstance();
         mRef = mdatabase.getReference("AP");
         mSwitchForScanning = (Switch)findViewById(R.id.swcScan);
+        tvRecoding = (TextView)findViewById(R.id.tvRecoding);
         etX = (EditText)findViewById(R.id.etX);
         etY = (EditText)findViewById(R.id.etY);
         setTabHost();
@@ -113,16 +117,18 @@ public class IndoorLocalization extends AppCompatActivity {
 
 
     public void btnSetCoordinate(View view) throws WriteException {
-        //tvScanOrNot.setText(etX.getText().toString());
         String x = etX.getText().toString();
         String y = etY.getText().toString();
-        int c = writeBook.writableSheet.getColumn(0).length;
-        int r = writeBook.writableSheet.getRows();
 
+        int r = writeBook.writableSheet.getRows();
+        c=r;
         if (choosing_result != null) {
             for (int i = 0; i < choosing_result.length; i++) {
-                writeBook.setCell(choosing_result[i][0], c, 1, x);
+                writeBook.setCell("null",0,r,0);
+                writeBook.setCell("null",1,r,0);
+                writeBook.setCell(choosing_result[i][0], 0, r, x);
                 writeBook.setCell(choosing_result[i][0], 1, r, y);
+                recoding = true;
             }
         }
     }
@@ -174,7 +180,7 @@ public class IndoorLocalization extends AppCompatActivity {
                 writableSheet = writeBook.createSheet(readBook.getSheet(i).getName().toString(),0);
                 for (int m=0; m<readBook.getSheet(i).getColumns(); m++) {
                     for (int n=0; n<readBook.getSheet(i).getRows(); n++) {
-                        setCell(readBook.getSheet(i).getName().toString(),m,n,r.getCell(readBook.getSheet(i).getName().toString(),m,n));
+                        setCell(readBook.getSheet(i).getName().toString(),m,n,Double.parseDouble(r.getCell(readBook.getSheet(i).getName().toString(),m,n)));
                     }
                 }
             }
@@ -185,6 +191,11 @@ public class IndoorLocalization extends AppCompatActivity {
             writableSheet.addCell(label);
         }
         private void setCell(String sheetName,int x,int y, int num) throws WriteException {
+            number = new jxl.write.Number(x, y, num);
+            writableSheet = writableWorkbook.getSheet(textAdjusting(sheetName));
+            writableSheet.addCell(number);
+        }
+        private void setCell(String sheetName,int x,int y, double num) throws WriteException {
             number = new jxl.write.Number(x, y, num);
             writableSheet = writableWorkbook.getSheet(textAdjusting(sheetName));
             writableSheet.addCell(number);
@@ -237,6 +248,7 @@ public class IndoorLocalization extends AppCompatActivity {
             tvScanWifiResult = (TextView)findViewById(R.id.txtScanWifiResult);
             tvScanOrNot = (TextView)findViewById(R.id.txt_tab2);
             tvScanOrNot.setText("你正在掃描了");
+
             if (Arrays.deepToString(aaryDatabaseInfo).equals("null")) {
                 tvScanWifiResult.setText("請確認您有連上網路以下載所需資料，並重新開始掃描");
                 mSwitchForScanning.setChecked(false);
@@ -297,7 +309,7 @@ public class IndoorLocalization extends AppCompatActivity {
             if (scanList.contains(aaryDatabaseInfo[i][0])) {           //如果從掃描的結果中有包含database的第i個  i=0 1 2 ...
                 int k = scanList.indexOf(aaryDatabaseInfo[i][0]);      //則取得scanList與第i個BSSID一樣的index(也會等於scanned的index)
                 choosing_result[i][0] = aaryDatabaseInfo[i][0];        //結果的第0個位置放database的第i個BSSID
-                choosing_result[i][1] = scanned[k][1];          //結果的第1個位置放當前的RSSI 也就是scanned[k]
+                choosing_result[i][1] = scanned[k][1];                 //結果的第1個位置放當前的RSSI 也就是scanned[k]
                 choosing_result[i][2] = aaryDatabaseInfo[i][1];        //結果的第2個位置放database的第i個RSSI_MAX
                 choosing_result[i][3] = aaryDatabaseInfo[i][2];        //結果的第3個位置放database的第i個RSSI的x
                 choosing_result[i][4] = aaryDatabaseInfo[i][3];        //結果的第4個位置放database的第i個RSSI的y
@@ -309,8 +321,6 @@ public class IndoorLocalization extends AppCompatActivity {
                 choosing_result[i][3] = aaryDatabaseInfo[i][2];
                 choosing_result[i][4] = aaryDatabaseInfo[i][3];
             }
-
-
         }
         return choosing_result;
     }
@@ -381,6 +391,7 @@ public class IndoorLocalization extends AppCompatActivity {
 
                     sss.append("\n").append(result.SSID).append("\n").append(result.BSSID).append("\b\b\b").append(result.level).append("\n");
                 }
+
             }catch (Exception e) {
                 e.printStackTrace();
             }
@@ -389,9 +400,24 @@ public class IndoorLocalization extends AppCompatActivity {
             wifiSorting(aaryScanWifiInfo);
             printArray(aaryScanWifiInfo);
 
+            if(recoding == true && re<=recordingNumber+2) {
+                try {
+                    writeBook.setCell("null",re-1,c,1);
+                    tvRecoding.setText("紀錄中...正在紀錄第 "+(re-2)+" 項，還剩下 "+(recordingNumber-re+2)+" 項");
+                    for (int i=0; i<aaryScanWifiInfo.length; i++) {
+                        writeBook.setCell(aaryScanWifiInfo[i][0],re-1,c,aaryScanWifiInfo[i][1]);
+                    }
+                    re++;
+                } catch (WriteException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                recoding = false;
+                re = 3;
+                tvRecoding.setText("紀錄已完成");
+            }
 
-
-            mHandler.postDelayed(this, 5000);
+            mHandler.postDelayed(this, 2000);
         }
     };
 
