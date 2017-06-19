@@ -397,7 +397,7 @@ public class IndoorLocalization extends AppCompatActivity {
             }
             tvScanWifiResult.setText(sss);
             aaryScanWifiInfo = wifiChoosing(aaryScanWifiInfo);
-            wifiSorting(aaryScanWifiInfo);
+            //wifiSorting(aaryScanWifiInfo);
             printArray(aaryScanWifiInfo);
 
             if(recoding == true && re<=recordingNumber+2) {
@@ -417,7 +417,7 @@ public class IndoorLocalization extends AppCompatActivity {
                 tvRecoding.setText("紀錄已完成");
             }
 
-            mHandler.postDelayed(this, 2000);
+            mHandler.postDelayed(this, 3500);
         }
     };
 
