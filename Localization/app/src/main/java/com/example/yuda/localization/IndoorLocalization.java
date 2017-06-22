@@ -370,7 +370,6 @@ public class IndoorLocalization extends AppCompatActivity {
         return String.valueOf(aryString);
     }
 
-
     // scan wifi per second
     final Runnable runnable = new Runnable() {
         @Override
@@ -421,8 +420,6 @@ public class IndoorLocalization extends AppCompatActivity {
         }
     };
 
-
-
     public void printArray(String[][] arr) {
         StringBuilder text = new StringBuilder();
         text.append("BSSID                       \tscanRSSI\tdataRSSI\t\t\tx\t\t\t\ty\n");
@@ -434,8 +431,5 @@ public class IndoorLocalization extends AppCompatActivity {
         }
         tvBaseInfo.setText(text);
     }
-
-
-
 
 }
