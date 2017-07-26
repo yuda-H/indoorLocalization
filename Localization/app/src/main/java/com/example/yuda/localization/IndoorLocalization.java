@@ -384,8 +384,7 @@ public class IndoorLocalization extends AppCompatActivity {
     final Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            StringBuilder sss = new StringBuilder();
-            sss.append("");
+            String sss = "";
             mWifiManager.startScan();
             List<ScanResult> resultList = mWifiManager.getScanResults();
             tvBaseInfo = (TextView)findViewById(R.id.txt_baseInfo);
@@ -398,12 +397,17 @@ public class IndoorLocalization extends AppCompatActivity {
                     aaryScanWifiInfo[i][0] = result.BSSID;
                     aaryScanWifiInfo[i][1] = result.level+"";
 
+<<<<<<< HEAD
                     sss.append("\n").append(result.SSID).append("\n").append(result.BSSID).append("\b\b\b").append(result.level).append("\n");
+=======
+                    sss +=  "\n" + result.SSID + "\n" + result.BSSID + "\b\b\b" + result.level + "\n";
+>>>>>>> parent of 44ba152... stringBuilder
                 }
 
             }catch (Exception e) {
                 e.printStackTrace();
             }
+<<<<<<< HEAD
             tvScanWifiResult.setText(sss);
             aaryScanWifiInfo = wifiChoosing(aaryScanWifiInfo);
             //wifiSorting(aaryScanWifiInfo);
@@ -427,17 +431,32 @@ public class IndoorLocalization extends AppCompatActivity {
             }
 
             mHandler.postDelayed(this, 3500);
+=======
+            txt_timer.setText(sss);
+            base = wifiChoosing(base);
+            wifiSorting(base);
+            //txt_baseInfo.setText(Arrays.deepToString(base)+"\n\n\n\n\n\n"+Arrays.deepToString(dataArray));
+            printArray(base);
+            handler.postDelayed(this, 500);
+>>>>>>> parent of 44ba152... stringBuilder
         }
     };
 
     public void printArray(String[][] arr) {
+<<<<<<< HEAD
         StringBuilder text = new StringBuilder();
         text.append("BSSID                       \tscanRSSI\tdataRSSI\t\t\tx\t\t\t\ty\n");
         for (String[] anArr : arr) {
             for (int j = 0; j < arr[0].length; j++) {
                 text.append(anArr[j]).append("\t\t\t");
+=======
+        String text = "BSSID                       \tscanRSSI\tdataRSSI\t\t\tx\t\t\t\ty\n";
+        for (int i=0; i<arr.length; i++) {
+            for (int j=0; j<arr[0].length; j++) {
+                text += arr[i][j]+"\t\t\t";
+>>>>>>> parent of 44ba152... stringBuilder
             }
-            text.append("\n");
+            text += "\n";
         }
         tvBaseInfo.setText(text);
     }
