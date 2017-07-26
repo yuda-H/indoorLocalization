@@ -398,7 +398,11 @@ public class IndoorLocalization extends AppCompatActivity {
                     aaryScanWifiInfo[i][1] = result.level+"";
 
 <<<<<<< HEAD
+<<<<<<< HEAD
                     sss.append("\n").append(result.SSID).append("\n").append(result.BSSID).append("\b\b\b").append(result.level).append("\n");
+=======
+                    sss +=  "\n" + result.SSID + "\n" + result.BSSID + "\b\b\b" + result.level + "\n";
+>>>>>>> parent of 44ba152... stringBuilder
 =======
                     sss +=  "\n" + result.SSID + "\n" + result.BSSID + "\b\b\b" + result.level + "\n";
 >>>>>>> parent of 44ba152... stringBuilder
@@ -444,16 +448,22 @@ public class IndoorLocalization extends AppCompatActivity {
 
     public void printArray(String[][] arr) {
 <<<<<<< HEAD
+<<<<<<< HEAD
         StringBuilder text = new StringBuilder();
         text.append("BSSID                       \tscanRSSI\tdataRSSI\t\t\tx\t\t\t\ty\n");
         for (String[] anArr : arr) {
             for (int j = 0; j < arr[0].length; j++) {
                 text.append(anArr[j]).append("\t\t\t");
 =======
+=======
+>>>>>>> parent of 44ba152... stringBuilder
         String text = "BSSID                       \tscanRSSI\tdataRSSI\t\t\tx\t\t\t\ty\n";
         for (int i=0; i<arr.length; i++) {
             for (int j=0; j<arr[0].length; j++) {
                 text += arr[i][j]+"\t\t\t";
+<<<<<<< HEAD
+>>>>>>> parent of 44ba152... stringBuilder
+=======
 >>>>>>> parent of 44ba152... stringBuilder
             }
             text += "\n";
