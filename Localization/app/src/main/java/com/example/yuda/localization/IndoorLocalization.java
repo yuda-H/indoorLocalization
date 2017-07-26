@@ -87,6 +87,7 @@ public class IndoorLocalization extends AppCompatActivity {
 
         readBook = new jxlFile();
         try {
+            readBook.checkDocuments();
             readBook.setFolderPath("WifiDataSet");
             readBook.setFileName("wifiData.xls");
             readBook.getReadBook();
@@ -143,6 +144,15 @@ public class IndoorLocalization extends AppCompatActivity {
         jxl.write.Label label;
         jxl.write.Number number;
         String folderPath, filePath;
+
+        private void checkDocuments(){
+            this.folderPath = Environment.getExternalStorageDirectory().getPath()+"/Documents";
+            file = new File(this.folderPath);
+            if(!file.exists()) {
+                file.mkdir();
+            }
+
+        }
 
         private void setFolderPath(String folderPath) {
             this.folderPath = Environment.getExternalStorageDirectory().getPath()+"/Documents/"+folderPath;
